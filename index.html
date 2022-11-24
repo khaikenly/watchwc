@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link href="https://vjs.zencdn.net/7.2.3/video-js.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.14.1/videojs-contrib-hls.js"></script>
+  <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script>
+    let arr = [{
+      name: "VTV1",
+      value: "https://vips-livecdn.fptplay.net/hda1/vtv1hd_vhls.smil/chunklist_b5000000.m3u8"
+    }, {
+      name: "VTV2",
+      value: "https://vips-livecdn.fptplay.net/hda1/vtv2_vhls.smil/chunklist_b5000000.m3u8"
+    }, {
+      name: "VTV3",
+      value: "https://vips-livecdn.fptplay.net/hda1/vtv3hd_vhls.smil/chunklist_b5000000.m3u8"
+    }, {
+      name: "VTV5TN",
+      value: "https://vips-livecdn.fptplay.net/hda2/vtv5hd_vhls.smil/chunklist_b5000000.m3u8"
+    }, {
+      name: "VTV5TNB",
+      value: "https://nvzoftzsvflivcf.vcdn.com.vn/vtv5tnb/vtv5tnb@high.m3u8"
+    }
+    , {
+      name: "VTVCT",
+      value: "https://vips-livecdn.fptplay.net/hda1/vtv6hd_vhls.smil/chunklist_b5000000.m3u8"
+    }];
+
+    function parse_query_string(query) {
+      var vars = query.split("&");
+      var query_string = {};
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        var key = decodeURIComponent(pair.shift());
+        var value = decodeURIComponent(pair.join("="));
+        if (typeof query_string[key] === "undefined") {
+          query_string[key] = value;
+        } else if (typeof query_string[key] === "string") {
+          var arr = [query_string[key], value];
+          query_string[key] = arr;
+        } else {
+          query_string[key].push(value);
+        }
+      }
+      return query_string;
+    }
+
+    function redirect() {
+      var radVal = $("input[name='qlt']:checked").val();
+      var optVal = $("#selectChannel option:selected").val();
+      console.log("Channel: " + optVal + ", Quality: " + radVal);
+      window.location.replace("?channel=" + optVal + "&quality=" + radVal);
+    }
+    $(function () {
+      var query = window.location.search.substring(1);
+      var qs = parse_query_string(query);
+      var cn = 'VTVCT';
+      var quality = 'FHD'
+      if (qs.hasOwnProperty('channel')) {
+        cn = qs.channel;
+      }
+      if (qs.hasOwnProperty('quality')) {
+        quality = qs.quality;
+      }
+      let obj = arr.find(o => o.name === cn);
+      document.title = 'Watch TV ' + obj.name + ' ' + quality + ' free by TekMonts!';
+      var srcTV = obj.value;
+      if (quality == 'HD') {
+        srcTV = srcTV.replace('50', '25');
+      }
+      $('input[name=qlt][value=' + quality + ']').prop("checked", true);
+      document.getElementById("tvsource").src = srcTV;
+      document.getElementById("selectChannel").value = obj.name;
+      var player = videojs('tvplay');
+      player.play();
+    });
+  </script>
+</head>
+
+<body style="background-color: black;">
+  <center id="maintv" style="margin-top: 50px;">
+    <video id='tvplay' class="video-js" width="1365" height="768" autoplay controls muted>
+      <source id='tvsource' type="application/x-mpegURL">
+    </video>
+  </center>
+  <p align="center" style="color: white;">Chọn kênh để xem: <select id='selectChannel' onchange="redirect();">
+      <option value="VTV1">VTV1</option>
+      <option value="VTV2">VTV2</option>
+      <option value="VTV3">VTV3</option>
+      <option value="VTV5TN">VTV5 Tây Nguyên</option>
+      <option value="VTV5TNB">VTV5 Tây Nam Bộ</option>
+      <option value="VTVCT">VTV Cần Thơ</option>
+    </select> &emsp; Chất lượng: <input type="radio" id="FHD" name="qlt" value="FHD" checked onchange="redirect();" />
+    <label for="FHD">Full HD</label>
+    <input type="radio" id="HD" name="qlt" value="HD" onchange="redirect();" />
+    <label for="HD">HD</label>
+  </p>
+</body>
+
+</html>
