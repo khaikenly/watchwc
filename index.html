@@ -66,7 +66,7 @@
         quality = qs.quality;
       }
       let obj = arr.find(o => o.name === cn);
-      document.title = 'Watch TV ' + obj.name + ' ' + quality + ' free by TekMonts!';
+      document.title = 'Watch TV ' + obj.name + ' ' + quality;
       var srcTV = obj.value;
       if (quality == 'HD') {
         srcTV = srcTV.replace('50', '25');
